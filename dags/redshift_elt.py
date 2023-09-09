@@ -28,6 +28,10 @@ def redshift_elt(*args, **kwargs):
     """Load data from S3 onto a staging table in Redshift"""
     start_operator = DummyOperator(task_id='Begin_execution')
 
+
+    ##################
+    ### Stage data ###
+    ##################
     stage_events_to_redshift = StageToRedshiftOperator(
         task_id='Stage_events',
         table='staging_events',
@@ -48,6 +52,9 @@ def redshift_elt(*args, **kwargs):
         json_format="auto"
     )
 
+    #################
+    ### Load data ###
+    #################
     load_songplays_table = LoadFactOperator(
         task_id='Load_songplays_fact_table',
         fact_table='songplays',
@@ -110,13 +117,16 @@ def redshift_elt(*args, **kwargs):
         redshift_conn_id='redshift',
         tests=quality_checks
     )
-
-    start_operator >> stage_events_to_redshift >> load_songplays_table
-    start_operator >> stage_songs_to_redshift >> load_songplays_table
-    load_songplays_table >> load_user_dimension_table  >> run_quality_checks
-    load_songplays_table >> load_song_dimension_table >> run_quality_checks
-    load_songplays_table >> load_artist_dimension_table >> run_quality_checks
-    load_songplays_table >> load_time_dimension_table >> run_quality_checks
+    # define dependencies
+    start_operator >> [
+            stage_events_to_redshift, 
+            stage_events_to_redshift
+        ] >> load_songplays_table >> [
+            load_user_dimension_table, 
+            load_song_dimension_table,
+            load_artist_dimension_table,
+            load_time_dimension_table
+        ] >> run_quality_checks 
     
     
 
