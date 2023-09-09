@@ -4,6 +4,7 @@ from airflow.utils.decorators import apply_defaults
 from airflow.secrets.metastore import MetastoreBackend
 
 class StageToRedshiftOperator(BaseOperator):
+    template_fields = ("s3_key",)
     ui_color = '#358140'
 
     @apply_defaults
