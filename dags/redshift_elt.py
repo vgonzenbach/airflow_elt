@@ -12,7 +12,7 @@ from operators.data_quality import DataQualityOperator
 
 default_args = {
     'owner': 'vgonzenb',
-    'start_date': datetime(2018,11,1),
+    'start_date': pendulum.now(),
     'catchup': False,
     'retries': 3,
     'retry_delay': timedelta(minutes=5), 
@@ -35,7 +35,8 @@ def redshift_elt(*args, **kwargs):
         redshift_conn_id='redshift',
         aws_credentials_id="aws_credentials",
         s3_bucket="udacity-vgonzenb",
-        s3_key="log_data/{{ execution_date.year }}/{{ execution_date.month}}"
+        s3_key="log_data/",
+        json_format="s3://udacity-vgonzenb/log_json_path.json"
     )
     
     stage_songs_to_redshift = StageToRedshiftOperator(

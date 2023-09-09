@@ -16,6 +16,7 @@ class StageToRedshiftOperator(BaseOperator):
                  aws_credentials_id,
                  s3_bucket,
                  s3_key,
+                 json_format='auto',
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
@@ -26,6 +27,7 @@ class StageToRedshiftOperator(BaseOperator):
         self.aws_credentials_id=aws_credentials_id
         self.s3_bucket=s3_bucket
         self.s3_key=s3_key
+        self.json_format=json_format
 
     def execute(self, context):
         # set up aws credentials
@@ -48,12 +50,13 @@ class StageToRedshiftOperator(BaseOperator):
             FROM '{}'
             ACCESS_KEY_ID '{}'
             SECRET_ACCESS_KEY '{}'
-            FORMAT AS JSON 'auto'
+            FORMAT AS JSON '{}'
         """.format(
             self.table,
             s3_path,
             aws_connection.login,
-            aws_connection.password
+            aws_connection.password,
+            self.json_format
         )
         redshift.run(sql_stmt)
 
