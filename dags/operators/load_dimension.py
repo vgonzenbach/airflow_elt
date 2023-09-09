@@ -25,16 +25,18 @@ class LoadDimensionOperator(BaseOperator):
         # init hook
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
 
-        if not self.append_only:
+        if not self.append_only: # execute truncate-insert pattern
+            self.log.info(f"{self.append_only} is set to False. Clearing data before insertion")
             truncate_sql_stmt = """
                 DELETE FROM {};
             """.format(self.dim_table)
             redshift.run(truncate_sql_stmt)
 
-        # format interst slq statement
+        # format intert slq statement
         insert_sql_stmt = """
             INSERT INTO public.{}
         	{}
         """.format(self.dim_table, self.sql)
         # run sql
+        self.log.info(f"Inserting values into {self.dim_table}")
         redshift.run(insert_sql_stmt)

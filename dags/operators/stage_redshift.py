@@ -44,8 +44,8 @@ class StageToRedshiftOperator(BaseOperator):
             self.s3_bucket, 
             rendered_key
         )
-        # run the sql query with table, bucket, bucket prefix, execution_date year, execution date month
-        sql_stmt = """
+        # format copy sql query
+        copy_sql_stmt = """
             COPY {}
             FROM '{}'
             ACCESS_KEY_ID '{}'
@@ -58,6 +58,8 @@ class StageToRedshiftOperator(BaseOperator):
             aws_connection.password,
             self.json_format
         )
-        redshift.run(sql_stmt)
+        # run sql
+        self.log.info("Copying data from S3 into Redshift staging table")
+        redshift.run(copy_sql_stmt)
 
 

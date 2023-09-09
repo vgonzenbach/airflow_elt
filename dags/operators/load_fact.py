@@ -29,5 +29,6 @@ class LoadFactOperator(BaseOperator):
         	{}
         """.format(self.fact_table, self.sql)
         # run sql
+        self.log.info(f"Inserting values into {self.fact_table}")
         redshift.run(insert_sql_stmt)
 
