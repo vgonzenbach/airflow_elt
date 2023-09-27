@@ -13,7 +13,7 @@ default_args = {
     'owner': 'vgonzenb',
     'start_date': pendulum.now(),
     'catchup': False,
-    'retries': 3,
+    'retries': 0,
     'retry_delay': timedelta(minutes=5), 
     'depends_on_past': False,
     'email_on_retry': False
