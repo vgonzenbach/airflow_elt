@@ -120,7 +120,7 @@ def redshift_elt(*args, **kwargs):
     # define dependencies
     start_operator >> [
             stage_events_to_redshift, 
-            stage_events_to_redshift
+            stage_songs_to_redshift
         ] >> load_songplays_table >> [
             load_user_dimension_table, 
             load_song_dimension_table,
